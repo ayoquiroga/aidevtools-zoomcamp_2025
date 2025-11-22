@@ -1,0 +1,66 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}Eliminar TODO{% endblock %}
+
+{% block extra_style %}
+    .confirm-box {
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .warning-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+    .todo-preview {
+        background: #fff5f5;
+        border: 2px solid #fc8181;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+    }
+    .todo-preview h3 {
+        color: #c53030;
+        margin-bottom: 10px;
+    }
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #667eea;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'todo_list' %}" class="back-link">← Volver a la lista</a>
+    
+    <div class="confirm-box">
+        <div class="warning-icon">⚠️</div>
+        <h1>¿Eliminar este TODO?</h1>
+        <p>Esta acción no se puede deshacer.</p>
+
+        <div class="todo-preview">
+            <h3>{{ object.title }}</h3>
+            {% if object.description %}
+                <p>{{ object.description }}</p>
+            {% endif %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">🗑 Sí, Eliminar</button>
+                <a href="{% url 'todo_list' %}" class="btn btn-primary">✕ Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

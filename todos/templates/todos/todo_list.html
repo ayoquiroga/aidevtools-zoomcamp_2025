@@ -1,0 +1,127 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}Lista de TODOs{% endblock %}
+
+{% block extra_style %}
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .todo-item {
+        background: #f7fafc;
+        border-left: 4px solid #667eea;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+    .todo-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    .todo-item.resolved {
+        opacity: 0.6;
+        border-left-color: #48bb78;
+    }
+    .todo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+    }
+    .todo-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2d3748;
+    }
+    .todo-title.resolved {
+        text-decoration: line-through;
+    }
+    .todo-description {
+        color: #4a5568;
+        margin-bottom: 10px;
+    }
+    .todo-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 14px;
+        color: #718096;
+        margin-bottom: 15px;
+    }
+    .todo-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-pending {
+        background: #fed7d7;
+        color: #c53030;
+    }
+    .status-resolved {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #718096;
+    }
+    .empty-state h2 {
+        margin-bottom: 10px;
+    }
+{% endblock %}
+
+{% block content %}
+    <div class="header">
+        <h1>📝 Mis TODOs</h1>
+        <a href="{% url 'todo_create' %}" class="btn btn-primary">+ Nuevo TODO</a>
+    </div>
+
+    {% if todos %}
+        {% for todo in todos %}
+            <div class="todo-item {% if todo.resolved %}resolved{% endif %}">
+                <div class="todo-header">
+                    <h3 class="todo-title {% if todo.resolved %}resolved{% endif %}">
+                        {{ todo.title }}
+                    </h3>
+                    <span class="status-badge {% if todo.resolved %}status-resolved{% else %}status-pending{% endif %}">
+                        {% if todo.resolved %}✓ Resuelto{% else %}⏳ Pendiente{% endif %}
+                    </span>
+                </div>
+
+                {% if todo.description %}
+                    <p class="todo-description">{{ todo.description }}</p>
+                {% endif %}
+
+                <div class="todo-meta">
+                    <span>📅 Creado: {{ todo.created_at|date:"d/m/Y" }}</span>
+                    {% if todo.due_date %}
+                        <span>⏰ Vence: {{ todo.due_date|date:"d/m/Y" }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="todo-actions">
+                    <a href="{% url 'todo_toggle' todo.pk %}" class="btn {% if todo.resolved %}btn-warning{% else %}btn-success{% endif %}">
+                        {% if todo.resolved %}↶ Marcar como Pendiente{% else %}✓ Marcar como Resuelto{% endif %}
+                    </a>
+                    <a href="{% url 'todo_edit' todo.pk %}" class="btn btn-primary">✏ Editar</a>
+                    <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-danger">🗑 Eliminar</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <h2>No hay TODOs todavía</h2>
+            <p>¡Crea tu primer TODO para empezar!</p>
+        </div>
+    {% endif %}
+{% endblock %}
